@@ -1,0 +1,24 @@
+// background script
+browser.contextMenus.create({
+  id: "highlight-text",
+  title: "Highlight Text",
+  contexts: ["selection"]
+});
+
+browser.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "highlight-text") {
+    browser.tabs.sendMessage(tab.id, {
+      command: "highlight-text",
+      color: "yellow"  // replace with your desired color
+    });
+  }
+});
+
+// content script
+browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.command === "highlight-text") {
+    document.designMode = "on";
+    document.execCommand("HiliteColor", false, request.color);
+    document.designMode = "off";
+  }
+});
